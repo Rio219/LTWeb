@@ -23,10 +23,15 @@ public class UserServiceImpl implements IUserService {
         return null;
     }
 
+    @Override
+    public void insert(UserModel userModel) { // Implement the method
+        userDao.insert(userModel);
+    }
+
     public static void main(String[] args) {
         try {
             IUserService userService = new UserServiceImpl();
-            System.out.println(userService.login("tuantp2004", "123456"));
+            System.out.println(userService.login("RioHoang", "123456"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
