@@ -1,10 +1,10 @@
 package vn.loh.controllers;
 
 import java.io.IOException;
-import java.io.Serial;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,15 +13,18 @@ import vn.loh.models.UserModel;
 import vn.loh.services.IUserService;
 import vn.loh.services.impl.UserServiceImpl;
 
-@WebServlet(urlPatterns = {"/login", "/dang-nhap"})
+@WebServlet(urlPatterns = { "/login", "/waiting", "/logout" })
 public class LoginController extends HttpServlet {
-    @Serial
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
-    }
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String url = req.getRequestURI().toString();
+		if (url.contains("login"))
+		       req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
+		else if (url.contains("logout"))
+			logout(req, resp);
+	}
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -56,5 +59,20 @@ public class LoginController extends HttpServlet {
             req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
         }
     }
+	private void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		session.removeAttribute("user");
+		Cookie[] cookies = req.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("userID")) {
+					cookie.setMaxAge(0); 
+					resp.addCookie(cookie);
+					break;
+				}
+			}
+		}
+		resp.sendRedirect(req.getContextPath() + "/login");
+	}
 }
 

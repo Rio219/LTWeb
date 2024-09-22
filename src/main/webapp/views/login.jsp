@@ -114,5 +114,6 @@
         <span class="psw">Forgot <a href="#">password?</a></span>
     </div>
 </form>
+<a href="${pageContext.request.contextPath}/logout">Logout</a>
 </body>
 </html>
