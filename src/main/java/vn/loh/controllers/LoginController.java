@@ -1,6 +1,8 @@
 package vn.loh.controllers;
 
-import jakarta.servlet.RequestDispatcher;
+import java.io.IOException;
+import java.io.Serial;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,9 +12,6 @@ import jakarta.servlet.http.HttpSession;
 import vn.loh.models.UserModel;
 import vn.loh.services.IUserService;
 import vn.loh.services.impl.UserServiceImpl;
-
-import java.io.IOException;
-import java.io.Serial;
 
 @WebServlet(urlPatterns = {"/login", "/dang-nhap"})
 public class LoginController extends HttpServlet {

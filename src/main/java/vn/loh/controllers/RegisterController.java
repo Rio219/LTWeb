@@ -2,7 +2,7 @@ package vn.loh.controllers;
 
 import java.io.IOException;
 
-import vn.loh.ultils.Constant;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Cookie;
@@ -11,14 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import vn.loh.models.UserModel; // Import UserModel
-import vn.loh.services.IUserService; // Import IUserService
-import vn.loh.services.impl.UserServiceImpl; // Import UserServiceImpl
-
 @SuppressWarnings("serial")
 @WebServlet(urlPatterns = "/register")
 public class RegisterController extends HttpServlet {
-	private IUserService userService = new UserServiceImpl(); // Initialize user service
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -38,39 +33,27 @@ public class RegisterController extends HttpServlet {
 				}
 			}
 		}
-		req.getRequestDispatcher(Constant.Path).forward(req, resp);
+		req.getRequestDispatcher("/views/register1.jsp").forward(req, resp);
 	}
 
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String username = req.getParameter("username");
-		String password = req.getParameter("password");
-		String email = req.getParameter("email");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String first_name = request.getParameter("first_name");
+		String last_name = request.getParameter("last_name");
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		String address = request.getParameter("address");
+		String contact = request.getParameter("contact");
 
-		// Validate input
-		if (username == null || password == null || email == null || username.isEmpty() || password.isEmpty() || email.isEmpty()) {
-			req.setAttribute("alert", "All fields are required.");
-			req.getRequestDispatcher(Constant.Path).forward(req, resp);
-			return;
+		if (first_name.isEmpty() || last_name.isEmpty() || username.isEmpty() || password.isEmpty() || address.isEmpty()
+				|| contact.isEmpty()) {
+			RequestDispatcher req = request.getRequestDispatcher("register_1.jsp");
+			req.include(request, response);
+		} else {
+			RequestDispatcher req = request.getRequestDispatcher("register_2.jsp");
+			req.forward(request, response);
 		}
-
-		// Check if username already exists
-		if (userService.findByUsername(username) != null) {
-			req.setAttribute("alert", "Username already exists.");
-			req.getRequestDispatcher(Constant.Path).forward(req, resp);
-			return;
-		}
-
-		// Create new user
-		UserModel newUser = new UserModel();
-		newUser.setUsername(username);
-		newUser.setPassword(password); // Consider hashing the password
-		newUser.setEmail(email);
-
-		// Save user to the database
-		userService.insert(newUser);
-
-		// Redirect to login or success page
-		resp.sendRedirect(req.getContextPath() + "/login");
 	}
+
 }
